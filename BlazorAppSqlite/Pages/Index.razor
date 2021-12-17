@@ -1,0 +1,44 @@
+﻿@page "/"
+@using BlazorAppSqlite.Data
+@using Microsoft.EntityFrameworkCore
+
+<PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+<button @onclick="SaveData">Save</button>
+<button @onclick="LoadData">Load</button>
+
+@code{
+
+    [Inject]
+    internal IDbContextFactory<ClientSideDbContext> DbContextFactory { get; set; }
+
+    private ClientSideDbContext context;
+
+    protected override async Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+
+        context = await DbContextFactory.CreateDbContextAsync();
+    }
+
+    private async Task SaveData()
+    {
+        var wave = new Wave { Name = "Bells", Country = Guid.NewGuid().ToString() };
+        context.Waves.Add(wave);
+
+        await context.SaveChangesAsync();
+    }
+
+    private async Task LoadData()
+    {
+        var waves = await context.Waves.ToListAsync();
+
+        var xxx = waves;
+    }
+}
