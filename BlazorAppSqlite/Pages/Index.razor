@@ -1,13 +1,18 @@
 ﻿@page "/"
 @using BlazorAppSqlite.Data
 @using Microsoft.EntityFrameworkCore
-
+@implements IDisposable
+@inject DataSynchronizer DataSynchronizer
 <PageTitle>Index</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
 
+@foreach(var w in storedWaves)
+{
+    <p>@w.Name - @w.Country</p>
+}
 <SurveyPrompt Title="How is Blazor working for you?" />
 
 <button @onclick="SaveData">Save</button>
@@ -18,13 +23,13 @@ Welcome to your new app.
     [Inject]
     internal IDbContextFactory<ClientSideDbContext> DbContextFactory { get; set; }
 
-    private ClientSideDbContext context;
+    private ClientSideDbContext? context;
 
+    private List<Wave> storedWaves = new();
     protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
-
-        context = await DbContextFactory.CreateDbContextAsync();
+        context = await DataSynchronizer.GetPreparedDbContextAsync();
     }
 
     private async Task SaveData()
@@ -39,6 +44,13 @@ Welcome to your new app.
     {
         var waves = await context.Waves.ToListAsync();
 
-        var xxx = waves;
+        storedWaves = waves;
+
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        context?.Dispose();
     }
 }
