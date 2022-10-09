@@ -2,7 +2,6 @@ using BlazorAppSqlite;
 using BlazorAppSqlite.Data;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -12,7 +11,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddWaveDataDbContext();
 
-var host = builder.Build() ;
-
+var host = builder.Build();
 
 await host.RunAsync();
